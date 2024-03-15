@@ -22,7 +22,7 @@ import camelot
 from openpyxl import Workbook
 
 # from current chatgpt4 openapi API key access
-openai.api_key = "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"
+open.api_key = "${{ secrets.OPENAI_KEY }}"
 
 current_dir = os.getcwd()
 

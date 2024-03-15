@@ -47,7 +47,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # from current chatgpt4 openapi API key access
-openai.api_key = "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"
+# openai.api_key = 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
+open.api_key = "${{ secrets.OPENAI_KEY }}"
 current_dir = os.getcwd()
 
 # global variables for transferring important terms
