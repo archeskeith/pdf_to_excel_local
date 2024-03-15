@@ -38,7 +38,7 @@ from manual_test import statement_to_csv, get_exported_files, run_ocr_to_csv, ru
 from manual_test import generate_explanation,delete_thumbnails,pdf_to_csv_conversion,extract_text_from_page,convert_page_to_image,process_pdf
 import ast
 import PyPDF2
-from PyPDF2 import PdfFileMerger
+# from PyPDF2 import PdfFileMerger
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -47,7 +47,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # from current chatgpt4 openapi API key access
-openai.api_key = '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'
+openai.api_key = "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"
 current_dir = os.getcwd()
 
 # global variables for transferring important terms

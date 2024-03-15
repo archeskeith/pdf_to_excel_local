@@ -14,7 +14,7 @@ from concurrent.futures import ThreadPoolExecutor
 from PyPDF2 import PdfReader
 from pdf2image import convert_from_path
 from PIL import Image
-from PyPDF2 import PdfFileMerger
+from PyPDF2 import PdfMerger
 import pytesseract
 import fitz
 import csv
@@ -22,7 +22,7 @@ import camelot
 from openpyxl import Workbook
 
 # from current chatgpt4 openapi API key access
-openai.api_key = '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'
+openai.api_key = "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"
 
 current_dir = os.getcwd()
 
@@ -52,7 +52,7 @@ def write_tables_to_excel(tables, excel_file):
 def process_pdf(file, second_file,search_words):
     
     if (second_file):
-        merger = PdfFileMerger()
+        merger = PdfMerger()
         merger.append(file)
         merger.append(second_file)
         # print("FILE: ",file)
