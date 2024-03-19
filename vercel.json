@@ -2,14 +2,25 @@
     "version": 2,
     "builds": [
         {
+<<<<<<< HEAD
             "src": "main.py",
+=======
+            "src": "app.py",
+>>>>>>> 747119efd04c415f36ca3f62a8f98be59c253bdc
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "(.*)",
+<<<<<<< HEAD
             "dest": "main.py"
         }
     ]}
     
+=======
+            "dest": "app.py"
+        }
+    ]
+}
+>>>>>>> 747119efd04c415f36ca3f62a8f98be59c253bdc
