@@ -77,7 +77,7 @@ Counter==1.0.0
 # cryptography @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_b470f7cb-c8f1-42c9-b84f-23789ea77e7c9difcqh4/croots/recipe/cryptography_1652101134392/work
 cssselect==1.1.0
 # cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
-cymem==2.0.7
+# cymem==2.0.7
 # Cython @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_2bxfxrakym/croots/recipe/cython_1663692778284/work
 # cytoolz==0.11.0
 # daal4py==2021.6.0
