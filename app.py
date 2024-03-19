@@ -2,10 +2,10 @@
 
 
 from flask import Flask, render_template, request, send_from_directory, redirect, url_for
-
 import os
 from werkzeug.datastructures import FileStorage
 from openpyxl import Workbook, load_workbook
+from dotenv import load_dotenv
 import re 
 import string
 import json
@@ -47,7 +47,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # from current chatgpt4 openapi API key access
-open.api_key = "${{ secrets.OPENAI_KEY }}"
+# open.api_key = "${{ secrets.OPENAI_KEY }}"
+# open.api_key = "${os.getenv('api_key')}"
+# open.api_key = os.environ['api_key']
+openai.api_key = os.environ['api_key']
 current_dir = os.getcwd()
 
 # global variables for transferring important terms
@@ -58,6 +61,9 @@ partners = {}
 @app.route('/failed')
 def failed():
     return render_template('failed.html')
+
+def configure():
+    load_dotenv()
 
 @app.route('/are_you_sure')
 def are_you_sure():

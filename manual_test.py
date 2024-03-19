@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from werkzeug.datastructures import FileStorage
 from openpyxl import Workbook, load_workbook
 import re 
@@ -22,8 +23,11 @@ import camelot
 from openpyxl import Workbook
 
 # from current chatgpt4 openapi API key access
-open.api_key = "${{ secrets.OPENAI_KEY }}"
-
+# open.api_key = "${{ secrets.OPENAI_KEY }}"
+# open.api_key = "${{ creds.api_key }}"
+# open.api_key = os.environ['api_key']
+openai.api_key = os.environ['api_key']
+# print(os.environ['api_key'])
 current_dir = os.getcwd()
 
 # count the number of pages a pdf has
@@ -110,10 +114,10 @@ def extract_text_from_page(page,pdf_path):
     
     thumbnail = image.resize((300, 300))
     
-    thumbnail_path = os.path.join(current_dir, "static", "thumbnail_page_" + str(page.number) + ".png")
+    thumbnail_path = os.path.join(current_dir, "static", "thumbnail_page_" + str(page.number+1) + ".png")
 
     # static folder is needed for flask
-    thumbnail_name = '../static/thumbnail_page_'+str(page.number)+'.png'
+    thumbnail_name = '../static/thumbnail_page_'+str(page.number+1)+'.png'
     thumbnail.save(thumbnail_path)
     
     return {'page_number': page.number + 1, 'text': image_text, 'explanation': explanation, 'thumbnail_path': thumbnail_name}
