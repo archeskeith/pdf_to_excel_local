@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, send_from_directory, redirect
 import os
 from werkzeug.datastructures import FileStorage
 from openpyxl import Workbook, load_workbook
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import re 
 import string
 import json
@@ -32,7 +32,7 @@ import openai
 from pdf2image import convert_from_path
 from PIL import Image
 import tabula
-from manual_test import statement_to_xlsx
+from manual_test import statement_to_xlsx, write_to_excel
 from manual_test import count_exported_csv_files,delete_exported_csv_files,extract_numbers_from_string,delete_temp_files
 from manual_test import statement_to_csv, get_exported_files, run_ocr_to_csv, run_ocr_to_csv_multiple_times,improve_text_structure
 from manual_test import generate_explanation,delete_thumbnails,pdf_to_csv_conversion,extract_text_from_page,convert_page_to_image,process_pdf
@@ -50,7 +50,19 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # open.api_key = "${{ secrets.OPENAI_KEY }}"
 # open.api_key = "${os.getenv('api_key')}"
 # open.api_key = os.environ['api_key']
-openai.api_key = os.environ['api_key']
+# api_key = os.environ.get('api_key', 'default_value')
+# openai.api_key = api_key
+# Access the API key from the environment variables
+load_dotenv()
+api_key = os.getenv("API_KEY")
+
+# Check if API key is available
+if api_key:
+    openai.api_key = api_key
+else:
+    print("API key not found. Please check your .env file.")
+
+# openai.api_key = os.environ['api_key']
 current_dir = os.getcwd()
 
 # global variables for transferring important terms
@@ -79,6 +91,7 @@ def are_you_sure():
     for file_index in range(count):
         file_name = f'exported{file_index}.csv'
         file_path = os.path.join(output_dir, file_name)
+        # print("CSV FILE PATH: ",file_path)
         os.system(f'open {file_path}') 
 
     # deleting thumbnail images for a cleaner directory
@@ -87,7 +100,7 @@ def are_you_sure():
     exported_files = get_exported_files()
 
     global global_excel_file
-    print('GLOBAL EXCEL FILE:',global_excel_file)
+    # print('GLOBAL EXCEL FILE:',global_excel_file)
     flag = True if global_excel_file=='uploads/' else False
     # rendering are_you_sure html with the exported files included for the user to either re-extract or not
     return render_template('are_you_sure.html',exported_files=exported_files,excel_file=flag)
@@ -95,7 +108,7 @@ def are_you_sure():
 @app.route('/run_extract', methods=['POST'])
 def run_extract():
     selectedFiles = request.form.getlist('files_to_include')
-    print('SELECTED FILES FOR REEXTRACTION: ', selectedFiles)
+    # print('SELECTED FILES FOR REEXTRACTION: ', selectedFiles)
 
     global partners
     global exported_files
@@ -266,7 +279,8 @@ def extract_csv():
 
 
 def transfer_to_excel(each_results_per_page,dictionary):
-    print("EACH RESULTS PER PAGE: ",each_results_per_page)
+    # print("EACH RESULTS PER PAGE: ",each_results_per_page)
+    # print(current_dir)
     for x in range((each_results_per_page)):
         try:
             with open(current_dir+'/output/exported'+str(x)+'.csv', 'r') as file:
@@ -283,3 +297,4 @@ def uploaded_file(filename):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    

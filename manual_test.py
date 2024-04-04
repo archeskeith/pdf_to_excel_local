@@ -1,5 +1,5 @@
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from werkzeug.datastructures import FileStorage
 from openpyxl import Workbook, load_workbook
 import re 
@@ -26,7 +26,19 @@ from openpyxl import Workbook
 # open.api_key = "${{ secrets.OPENAI_KEY }}"
 # open.api_key = "${{ creds.api_key }}"
 # open.api_key = os.environ['api_key']
-openai.api_key = os.environ['api_key']
+# api_key = os.environ.get('api_key', 'default_value')
+# openai.api_key = api_key
+# Access the API key from the environment variables
+load_dotenv()
+api_key = os.getenv("API_KEY")
+
+# Check if API key is available
+if api_key:
+    openai.api_key = api_key
+else:
+    print("API key not found. Please check your .env file.")
+
+# openai.api_key = os.environ['api_key']
 # print(os.environ['api_key'])
 current_dir = os.getcwd()
 
@@ -115,6 +127,7 @@ def extract_text_from_page(page,pdf_path):
     thumbnail = image.resize((300, 300))
     
     thumbnail_path = os.path.join(current_dir, "static", "thumbnail_page_" + str(page.number+1) + ".png")
+    # thumbnail_path = os.path.join('Users/archeskeith/Downloads/', "static", "thumbnail_page_" + str(page.number+1) + ".png")
 
     # static folder is needed for flask
     thumbnail_name = '../static/thumbnail_page_'+str(page.number+1)+'.png'
@@ -187,8 +200,8 @@ def pdf_to_csv_conversion(pdf_file, page_number, num_iterations=5):
 
         # converting pdf to image
         images = convert_from_path(file.name, first_page=page_number, last_page=page_number, single_file=True)
-        print("IMAGES: ",images)
-        print("FILE.NAME: ",file.name)
+        # print("IMAGES: ",images)
+        # print("FILE.NAME: ",file.name)
         
         image = images[0]
 
@@ -243,9 +256,9 @@ def statement_to_csv(input_statement,page):
 
     # splitting into lines
     lines = cleaned_statement.split('\n')
-    print("PAGE CSV NUMBER: ",str(page))
+    # print("PAGE CSV NUMBER: ",str(page))
     with open(current_dir+'/output/exported'+str(page)+'.csv', 'w', newline='') as csv_file:
-        print(csv_file)
+        # print(csv_file)
         csv_writer = csv.writer(csv_file)
 
         # write each lines
@@ -292,7 +305,7 @@ def delete_exported_csv_files(folder_path):
         if file.startswith("exported") and file.endswith(".csv"):
             file_path = os.path.join(folder_path, file)
             os.remove(file_path)
-            print("Deleted file:", file_path)
+            # print("Deleted file:", file_path)
 
 def delete_temp_files():
     folder_path = os.getcwd()
@@ -301,7 +314,7 @@ def delete_temp_files():
         if file.startswith("temp_page") and file.endswith(".png"):
             file_path = os.path.join(folder_path, file)
             os.remove(file_path)
-            print("Deleted file:", file_path)
+            # print("Deleted file:", file_path)
 
 def find_index_of_2021_or_2022(data):
     # regex for matching years from 1900 to 2099 (to recognize where the year is indexed)
@@ -335,6 +348,154 @@ def create_dictionary_from_index(data, start_index):
         result_dict[sublist[0]] = sublist[1:]
     return result_dict
 
+
+# def statement_to_xlsx(input_statement,excel_file,dictionary):
+   
+#     cleaned_statement = input_statement.replace('|', ',').replace('/n', '\n')
+#     lines = cleaned_statement.split('\n')
+
+
+#     # creating a new workbook to make a worksheet
+#     wb = Workbook()
+#     ws = wb.active
+
+#     data = []
+
+#     for line in lines:
+    
+#         if line.strip() != '':
+#             row_data = line.split(',')
+#             data.append(row_data)
+#             ws.append(row_data)
+
+#     # saving the workbook
+#     xlsx_file_path = os.path.join(os.getcwd(), 'output', 'exported.xlsx')
+#     print('XLSX FILE PATH: ',xlsx_file_path)
+#     wb.save(xlsx_file_path)
+
+#     sheet_name = 'Financial Analysis'
+#     column = 'D'
+
+#     # finding the index of the sublist containing '2021' or '2022'
+#     index_of_2021_or_2022,year = find_index_of_2021_or_2022(data)
+#     if index_of_2021_or_2022 is not None:
+#         print("Index of sublist containing '2021' or '2022':", index_of_2021_or_2022)
+#     else:
+#         print("No sublist containing '2021' or '2022' found.")
+
+#     # creating a dictionary starting from the index where '2021' or '2022' is found
+#     if index_of_2021_or_2022 is not None:
+#         result_dict = create_dictionary_from_index(data, index_of_2021_or_2022)
+        
+#     else:
+#         print("No sublist containing '2021' or '2022' found.")
+    
+#     write_to_excel(sheet_name, column,year,data,index_of_2021_or_2022,result_dict,excel_file,dictionary)
+
+# # def statement_to_xlsx(input_statement,excel_file,dictionary):
+# #     cleaned_statement = input_statement.replace('|', ',').replace('/n', '\n')
+# #     lines = cleaned_statement.split('\n')
+
+
+# #     # creating a new workbook to make a worksheet
+# #     wb = Workbook()
+# #     ws = wb.active
+
+# #     data = []
+
+# #     for line in lines:
+    
+# #         if line.strip() != '':
+# #             row_data = line.split(',')
+# #             data.append(row_data)
+# #             ws.append(row_data)
+
+# #     # saving the workbook
+# #     xlsx_file_path = os.path.join(os.getcwd(), 'output', 'exported.xlsx')
+# #     print('XLSX FILE PATH: ',xlsx_file_path)
+# #     wb.save(xlsx_file_path)
+
+# #     sheet_name = 'Financial Analysis'
+# #     column = 'D'
+
+# #     # finding the index of the sublist containing '2021' or '2022'
+# #     index_of_2021_or_2022,year = find_index_of_2021_or_2022(data)
+# #     if index_of_2021_or_2022 is not None:
+# #         print("Index of sublist containing '2021' or '2022':", index_of_2021_or_2022)
+# #     else:
+# #         print("No sublist containing '2021' or '2022' found.")
+
+# #     # creating a dictionary starting from the index where '2021' or '2022' is found
+# #     if index_of_2021_or_2022 is not None:
+# #         result_dict = create_dictionary_from_index(data, index_of_2021_or_2022)
+        
+# #     else:
+# #         print("No sublist containing '2021' or '2022' found.")
+    
+# #     write_to_excel(sheet_name, year,result_dict,excel_file,dictionary)
+    
+
+# def write_to_excel(sheet_name, column,year,data,index_of_2021_or_2022,result_dict,excel_file,dictionary):
+
+#     print("EXCEL FILE: ",excel_file)
+#     wb = load_workbook(current_dir+'/'+excel_file)
+  
+#     ws = wb[sheet_name]
+
+
+
+#     result_dict_lower = {key.lower(): value for key, value in result_dict.items()}
+    
+#     print("WITHOUT FOREIGN CHARACTERS: ",result_dict_lower)
+#     # print({key.lower(): value for key,value in master_dictionary.items()})
+#     master_dictionary = {key.lower(): value for key,value in master_dictionary.items()}
+#     print('master dictionary: ',master_dictionary)
+#     cell_values = [cell.value for cell in ws['B']]
+#     indexes = [-2,-1]
+#     all_years_dictionaries = []
+#     for kiof in indexes:
+#         final_dictionary = {}
+#         for current_master_key in list(master_dictionary.keys()):
+            
+#             # make a set for current master list 
+#             set_current_master_list = set(master_dictionary[current_master_key])
+
+#             # make a set from the resulting keys of extracted csv file
+#             set_extracted_csv_list = set(result_dict_lower.keys())
+            
+#             if (current_master_key in result_dict_lower.keys()):
+                
+#                 final_dictionary[current_master_key] = result_dict_lower[current_master_key][kiof] if ((result_dict_lower[current_master_key][kiof] != None) or (result_dict_lower[current_master_key][kiof] != ''))  else None
+#             if bool(set_current_master_list.intersection(set_extracted_csv_list)):
+#                 index_of_alternate_term = [[i for i, term in enumerate(master_dictionary[current_master_key]) if term in set_current_master_list.intersection(set_extracted_csv_list)]]
+#                 index_of_alternate_term = index_of_alternate_term[0][0]
+                
+#                 name_of_alt_term = master_dictionary[current_master_key][index_of_alternate_term]
+#                 final_dictionary[current_master_key] = result_dict_lower[name_of_alt_term][kiof]
+            
+#         all_years_dictionaries.append(final_dictionary)
+#     print("ALL YEARS DICTIONARIES: ",all_years_dictionaries)
+#     list_of_year_indexes = find_columns_with_years(ws,year)
+#     # iterate over each years
+#     for y in range(len(year)):
+        
+#         current_dictionary = all_years_dictionaries[y]
+        
+#         for key in current_dictionary:
+
+#             # find if the key matches any cell value in column B of the Excel file
+#             for row_index, row in enumerate(ws.iter_rows(min_col=2, max_col=2, values_only=True), start=1):
+#                 cell_value = row[0].lower() if row[0] is not None else None
+#                 normalized_key = key.lower().strip(string.punctuation)
+#                 normalized_cell_value = cell_value.lower().strip(string.punctuation) if row[0] is not None else None
+#                 if normalized_cell_value == normalized_key:
+#                     ws.cell(row=row_index, column=list_of_year_indexes[y], value=current_dictionary[key])            
+
+#     wb.save(current_dir+'/'+excel_file)
+#     file_path = os.path.join(current_dir,excel_file)
+#     print("FILE PATH: ",file_path)
+#     os.system(f'open {file_path}') 
+
 def statement_to_xlsx(input_statement,excel_file,dictionary):
     cleaned_statement = input_statement.replace('|', ',').replace('/n', '\n')
     lines = cleaned_statement.split('\n')
@@ -355,25 +516,29 @@ def statement_to_xlsx(input_statement,excel_file,dictionary):
 
     # saving the workbook
     xlsx_file_path = os.path.join(os.getcwd(), 'output', 'exported.xlsx')
-    print('XLSX FILE PATH: ',xlsx_file_path)
+    # print('XLSX FILE PATH: ',xlsx_file_path)
+    print('try print')
     wb.save(xlsx_file_path)
 
     sheet_name = 'Financial Analysis'
     column = 'D'
-
+    
     # finding the index of the sublist containing '2021' or '2022'
     index_of_2021_or_2022,year = find_index_of_2021_or_2022(data)
     if index_of_2021_or_2022 is not None:
-        print("Index of sublist containing '2021' or '2022':", index_of_2021_or_2022)
+        None
+        # print("Index of sublist containing '2021' or '2022':", index_of_2021_or_2022)
     else:
-        print("No sublist containing '2021' or '2022' found.")
+        None
+        # print("No sublist containing '2021' or '2022' found.")
 
     # creating a dictionary starting from the index where '2021' or '2022' is found
     if index_of_2021_or_2022 is not None:
         result_dict = create_dictionary_from_index(data, index_of_2021_or_2022)
         
     else:
-        print("No sublist containing '2021' or '2022' found.")
+        None
+        # print("No sublist containing '2021' or '2022' found.")
     
     write_to_excel(sheet_name, year,result_dict,excel_file,dictionary)
     
@@ -381,17 +546,17 @@ def statement_to_xlsx(input_statement,excel_file,dictionary):
 
 def write_to_excel(sheet_name,year,result_dict,excel_file,dictionary):
 
-    
+    print('yes')
     wb = load_workbook(current_dir+'/'+excel_file)
-    print("WB: ",wb)
+    # print("WB: ",wb)
     ws = wb[sheet_name]
 
 
     result_dict_lower = {key.lower(): value for key, value in result_dict.items()}
-    print("result dict lower: ",result_dict_lower)
+    # print("result dict lower: ",result_dict_lower)
     master_dictionary = {key.lower(): value for key,value in dictionary.items()}
 
-    print('master dictionary: ',master_dictionary)
+    # print('master dictionary: ',master_dictionary)
     indexes = [-2,-1]
 
     # for result dictionary keys
@@ -453,7 +618,86 @@ def write_to_excel(sheet_name,year,result_dict,excel_file,dictionary):
                 
     wb.save(current_dir+'/'+excel_file)
     file_path = os.path.join(current_dir,excel_file)
+    # print("FILE PATH:: ",file_path)
     os.system(f'open {file_path}') 
+
+# FILE PATH::  /Users/archeskeith/Downloads/ChatGPT-Flask/for_executable/pdf_to_excel_bank_statements/uploads/new_version.xlsx
+
+# def write_to_excel(sheet_name,year,result_dict,excel_file,dictionary):
+
+    
+#     wb = load_workbook(current_dir+'/'+excel_file)
+#     print("WB: ",wb)
+#     ws = wb[sheet_name]
+
+
+#     result_dict_lower = {key.lower(): value for key, value in result_dict.items()}
+#     print("result dict lower: ",result_dict_lower)
+#     master_dictionary = {key.lower(): value for key,value in dictionary.items()}
+
+#     print('master dictionary: ',master_dictionary)
+#     indexes = [-2,-1]
+
+#     # for result dictionary keys
+#     n_result_dictionary_keys = {}
+#     for key, value in result_dict.items():
+#         normalized_key = normalize_string(key)
+#         n_result_dictionary_keys[normalized_key] = value
+
+#     # for master dictionary (items and key)
+#     n_master_dictionary_keys = {}
+#     for key, value in master_dictionary.items():
+#         # Normalize the key
+#         normalized_key = normalize_string(key)
+        
+#         # Normalize strings within lists
+#         if isinstance(value, list):
+#             normalized_values = [normalize_string(item) for item in value]
+#             n_master_dictionary_keys[normalized_key] = normalized_values
+#         else:
+#             n_master_dictionary_keys[normalized_key] = normalize_string(value)
+
+#     all_years_dictionaries = []
+#     # Create sets of keys for quicker lookup
+#     set_extracted_csv_keys = set(n_result_dictionary_keys.keys())
+
+#     for kiof in indexes:
+#         final_dictionary = {}
+#         for current_master_key, current_master_list in n_master_dictionary_keys.items():
+#             if current_master_key in set_extracted_csv_keys:
+#                 extracted_csv_value = n_result_dictionary_keys[current_master_key][kiof]
+#                 if extracted_csv_value not in [None, '']:
+#                     final_dictionary[current_master_key] = extracted_csv_value
+
+#             # checking for intersection between current master list and extracted CSV keys
+#             common_keys = set(current_master_list) & set_extracted_csv_keys
+#             if common_keys:
+#                 index_of_alternate_term = current_master_list.index(next(iter(common_keys)))
+#                 name_of_alt_term = current_master_list[index_of_alternate_term]
+#                 final_dictionary[current_master_key] = n_result_dictionary_keys[name_of_alt_term][kiof]
+
+#         all_years_dictionaries.append(final_dictionary)
+
+#     list_of_year_indexes = find_columns_with_years(ws,year)
+    
+#     normalized_cell_values = {(normalize_string(cell[0].lower()), row_idx) for row_idx, cell in enumerate(ws.iter_rows(min_col=2, max_col=2, values_only=True), start=1) if cell[0]}
+
+#     # iterating over each year
+#     for y, current_dictionary in enumerate(all_years_dictionaries):
+#         for key, value in current_dictionary.items():
+#             # Normalize the key
+#             normalized_key = normalize_string(key)
+#             # Check if the normalized key exists in the precomputed set
+#             for normalized_cell_value, row_index in normalized_cell_values:
+#                 if normalized_cell_value == normalized_key:
+#                     col_letter = get_column_letter(list_of_year_indexes[y])
+#                     cell_address = f"{col_letter}{row_index}"
+#                     ws[cell_address] = value
+#                     break
+                
+#     wb.save(current_dir+'/'+excel_file)
+#     file_path = os.path.join(current_dir,excel_file)
+#     os.system(f'open {file_path}') 
 
 # just to try it on
 # def main():
